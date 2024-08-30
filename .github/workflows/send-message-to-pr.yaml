@@ -1,0 +1,37 @@
+---
+name: Send a message to pull requests
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: Message to send
+        required: true
+      query:
+        description: Query to search pull requests
+        required: true
+jobs:
+  send-message-to-pr:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: aquaproj/aqua-installer@6ce1f8848ec8e61f14d57bd5d7597057a6dd187c # v3.0.1
+        with:
+          aqua_version: v2.31.0
+        env:
+          GITHUB_TOKEN: ${{github.token}}
+      - id: token
+        uses: tibdex/github-app-token@v2
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          # permissions: >-
+          #   {"projects": "write"}
+          # repositories: >-
+          #   []
+      - run: orgov send-message-to-pr
+        env:
+          GITHUB_TOKEN: ${{steps.token.outputs.token}}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

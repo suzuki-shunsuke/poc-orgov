@@ -1,0 +1,28 @@
+---
+name: Send a message to the resoure owner
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: Message to send
+        required: true
+      resource:
+        description: Resource
+        required: true
+jobs:
+  send-message-to-owner:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: aquaproj/aqua-installer@6ce1f8848ec8e61f14d57bd5d7597057a6dd187c # v3.0.1
+        with:
+          aqua_version: v2.31.0
+        env:
+          GITHUB_TOKEN: ${{github.token}}
+      - run: orgov send-message-to-owner
+        env:
+          GITHUB_TOKEN: ${{github.token}}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

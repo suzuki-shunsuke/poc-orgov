@@ -1,0 +1,6 @@
+teams:
+  sre:
+    github_team: szksh-lab/sre
+    slack_channel: team-sre
+    repositories:
+      - terraform

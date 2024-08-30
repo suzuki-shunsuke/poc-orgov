@@ -1,0 +1,27 @@
+---
+name: Archive repositories
+on:
+  workflow_dispatch: {}
+  # schedule:
+  #   - cron: "*/10 * * * *"
+jobs:
+  archive-repo:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: aquaproj/aqua-installer@6ce1f8848ec8e61f14d57bd5d7597057a6dd187c # v3.0.1
+        with:
+          aqua_version: v2.31.0
+        env:
+          GITHUB_TOKEN: ${{github.token}}
+      - run: orgov archive-repo
+        env:
+          GITHUB_TOKEN: ${{github.token}}
+      - uses: suzuki-shunsuke/notify-workflow-error-action@e5e8817e62eb122231d162dbc8309c4d05a21b2e # v0.1.0
+        if: always()
+        with:
+          issue_number: "1"
+          status: ${{ job.status }}
